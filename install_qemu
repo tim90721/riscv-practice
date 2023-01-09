@@ -1,17 +1,17 @@
 #!/bin/sh
 
-QEMU_DIR = $(PWD)/emulator
-QEMU_SRC_DIR = ${QEMU_DIR}/qemu-${QEMU_VER}
-QEMU_BUILD_DIR = ${QEMU_DIR}/build
-QEMU_BIN_DIR = ${QEMU_BUILD_DIR}/bin
-
 QEMU_VER ?= 7.0.0
-QEMU_TARBALL = qemu-${QEMU_VER}.tar.xz
-
 QEMU_TARGET ?= riscv32-softmmu,riscv32-linux-user
 
+EMULATOR_DIR = $(PWD)/emulator
+QEMU_SRC_DIR = ${EMULATOR_DIR}/qemu-${QEMU_VER}
+QEMU_BUILD_DIR = ${EMULATOR_DIR}/build
+QEMU_BIN_DIR = ${QEMU_BUILD_DIR}/bin
+
+QEMU_TARBALL = qemu-${QEMU_VER}.tar.xz
+
 echo "QEMU VERISION: ${QEMU_VER}"
-echo "QEMU DIR: ${QEMU_DIR}"
+echo "QEMU DIR: ${EMULATOR_DIR}"
 echo "QEMU SRC DIR: ${QEMU_SRC_DIR}"
 echo "QEMU BUILD DIR: ${QEMU_BUILD_DIR}"
 echo "QEMU BIN DIR: ${QEMU_BIN_DIR}"
@@ -20,12 +20,12 @@ echo "QEMU TAREGT: ${QEMU_TARGET}"
 # install prerequisite
 sudo apt-get install libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build
 
-if [ ! -d "${QEMU_DIR}" ]; then
-	mkdir -p ${QEMU_DIR}
+if [ ! -d "${EMULATOR_DIR}" ]; then
+	mkdir -p ${EMULATOR_DIR}
 fi
 
 # to qemu build root directory
-cd ${QEMU_DIR}
+cd ${EMULATOR_DIR}
 
 # download qemu tarball
 wget https://download.qemu.org/${QEMU_TARBALL}
