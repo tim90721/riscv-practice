@@ -1,17 +1,16 @@
 #!/bin/sh
 
-QEMU_VER ?= 7.0.0
-QEMU_TARGET ?= riscv32-softmmu,riscv32-linux-user
+QEMU_VER=7.0.0
+QEMU_TARGET=riscv32-softmmu,riscv32-linux-user
 
-EMULATOR_DIR = $(PWD)/emulator
-QEMU_SRC_DIR = ${EMULATOR_DIR}/qemu-${QEMU_VER}
-QEMU_BUILD_DIR = ${EMULATOR_DIR}/build
-QEMU_BIN_DIR = ${QEMU_BUILD_DIR}/bin
+EMULATOR_DIR=${PWD}/emulator
+QEMU_SRC_DIR=${EMULATOR_DIR}/qemu-${QEMU_VER}
+QEMU_BUILD_DIR=${EMULATOR_DIR}/build
+QEMU_BIN_DIR=${QEMU_BUILD_DIR}/bin
 
-QEMU_TARBALL = qemu-${QEMU_VER}.tar.xz
+QEMU_TARBALL=qemu-${QEMU_VER}.tar.xz
 
 echo "QEMU VERISION: ${QEMU_VER}"
-echo "QEMU DIR: ${EMULATOR_DIR}"
 echo "QEMU SRC DIR: ${QEMU_SRC_DIR}"
 echo "QEMU BUILD DIR: ${QEMU_BUILD_DIR}"
 echo "QEMU BIN DIR: ${QEMU_BIN_DIR}"
@@ -43,4 +42,4 @@ cd ${QEMU_SRC_DIR}
 ./configure --target-list=${QEMU_TARGET} --prefix=${QEMU_BUILD_DIR} \
 	&& make \
 	&& make install \
-	&& echo "PATH=$${PATH}:${QEMU_BIN_DIR}
+	&& echo "PATH=$${PATH}:${QEMU_BIN_DIR}"
