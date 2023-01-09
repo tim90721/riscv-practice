@@ -1,0 +1,36 @@
+#!/bin/sh
+
+TOOLCHAIN_DIR=${PWD}/toolchain
+TOOLCHAIN_SRC_DIR=${TOOLCHAIN_DIR}/riscv-gnu-toolchain
+TOOLCHAIN_BUILD_DIR=${TOOLCHAIN_DIR}/build
+TOOLCHAIN_BIN_DIR=${TOOLCHAIN_BUILD_DIR}/bin
+
+TOOLCHAIN_ARCH=rv32g
+TOOLCHAIN_ABI=ilp32d
+
+echo "TOOLCHAIN DIR: ${TOOLCHAIN_DIR}"
+echo "TOOLCHAIN SRC DIR: ${TOOLCHAIN_SRC_DIR}"
+echo "TOOLCHAIN BUILD DIR: ${TOOLCHAIN_BUILD_DIR}"
+echo "TOOLCHAIN BIN DIR: ${TOOLCHAIN_BIN_DIR}"
+echo "TOOLCHAIN ARCH: ${TOOLCHAIN_ARCH}"
+echo "TOOLCHAIN ABI: ${TOOLCHAIN_ABI}"
+
+# install prerequisite
+sudo apt-get install autoconf automake autotools-dev curl python3	\
+	libmpc-dev libmpfr-dev libgmp-dev gawk build-essential		\
+	bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
+
+cd ${TOOLCHAIN_SRC_DIR}
+
+# remove qemu before update the repository
+git rm qemu
+
+# update rest of the repository
+git submodule update --init --recursive
+
+# build
+./configure --prefix=${TOOLCHAIN_BUILD_DIR}	\
+	--with-arch=${TOOLCHAIN_ARCH}		\
+	--with-abi=${TOOLCHAIN_ABI}		\
+	&& make					\
+	&& echo "PATH=$${PATH}:${TOOLCHAIN_BIN_DIR}"
