@@ -42,4 +42,4 @@ cd ${QEMU_SRC_DIR}
 ./configure --target-list=${QEMU_TARGET} --prefix=${QEMU_BUILD_DIR} \
 	&& make \
 	&& make install \
-	&& echo "PATH=$${PATH}:${QEMU_BIN_DIR}"
+	&& echo "PATH=\${PATH}:${QEMU_BIN_DIR}" > ~/.bashrc
