@@ -7,6 +7,7 @@ C_SRC := \
 
 USER_MODE := no
 OBJDUMP_FLAGS += -M no-aliases
+GDB_INIT := $(TARGET_SRC_DIR)/.gdbinit
 
 CFLAGS += -I$(TARGET_SRC_DIR)/inc
 
