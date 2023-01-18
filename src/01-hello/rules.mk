@@ -2,7 +2,8 @@ ASM_SRC := \
 	start.S
 C_SRC := \
 	kernel.c \
-	uart.c
+	uart.c \
+	printf.c
 
 USER_MODE := no
 OBJDUMP_FLAGS += -M no-aliases
