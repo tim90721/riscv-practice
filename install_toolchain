@@ -33,4 +33,4 @@ git submodule update --init --recursive
 	--with-arch=${TOOLCHAIN_ARCH}		\
 	--with-abi=${TOOLCHAIN_ABI}		\
 	&& make					\
-	&& echo "PATH=\${PATH}:${TOOLCHAIN_BIN_DIR}" > ~/.bashrc
+	&& echo "PATH=\${PATH}:${TOOLCHAIN_BIN_DIR}" >> ~/.bashrc
