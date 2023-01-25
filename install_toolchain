@@ -18,7 +18,8 @@ echo "TOOLCHAIN ABI: ${TOOLCHAIN_ABI}"
 # install prerequisite
 sudo apt-get install autoconf automake autotools-dev curl python3	\
 	libmpc-dev libmpfr-dev libgmp-dev gawk build-essential		\
-	bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
+	bison flex texinfo gperf libtool patchutils bc zlib1g-dev	\
+	libexpat-dev gdb-multiarch
 
 cd ${TOOLCHAIN_SRC_DIR}
 
