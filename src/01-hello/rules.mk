@@ -10,6 +10,7 @@ OBJDUMP_FLAGS += -M no-aliases
 GDB_INIT := $(TARGET_SRC_DIR)/.gdbinit
 
 CFLAGS += -I$(TARGET_SRC_DIR)/inc
+LD_FLAGS += -Ttext=0x80000000
 
 define RUN/$(TARGET)
 	$(call RUN/system-default)

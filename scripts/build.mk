@@ -3,7 +3,11 @@ CFLAGS += $(ARCH_CFLAGS) -g -Wall
 ifeq ($(strip $(USER_MODE)),yes)
 CFLAGS += -static
 else
-CFLAGS += -nostdlib -fno-builtin -Ttext=0x80000000
+CFLAGS += -nostdlib -fno-builtin
+endif
+
+ifneq ($(strip $(OUTPUT_LD)),)
+LD_FLAGS += -T $(OUTPUT_LD) -Wl,-Map=$(TARGET_BUILD_DIR)/$(TARGET).map
 endif
 
 ASM_OBJS := $(patsubst %.S,%.o,$(patsubst %.s,%.o,$(ASM_SRC)))
@@ -27,7 +31,7 @@ endef
 
 define LINK
 	@echo "\tLINK\t$(@F)"
-	$(Q)$(CC) $(CFLAGS) $(1) -o $(2)
+	$(Q)$(CC) $(CFLAGS) $(LD_FLAGS) $(1) -o $(2)
 endef
 
 define DISASSEMBLY
