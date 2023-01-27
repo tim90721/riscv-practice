@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "sched.h"
+#include "task.h"
 #include "uart.h"
 
 int start_kernel(void)
@@ -13,6 +15,8 @@ int start_kernel(void)
 	printf("hello world: %d\n", i);
 	printf("hello world: %p\n", &i);
 	printf("hello world: %%\n");
+
+	sched_init();
 
 	while (1)
 		;

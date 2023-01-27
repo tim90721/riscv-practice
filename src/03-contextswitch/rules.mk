@@ -1,9 +1,11 @@
 ASM_SRC := \
-	start.S
+	start.S \
+	entry.S
 C_SRC := \
 	kernel.c \
 	uart.c \
-	printf.c
+	printf.c \
+	sched.c
 
 USER_MODE := no
 OBJDUMP_FLAGS += -M no-aliases
