@@ -5,7 +5,8 @@ C_SRC := \
 	kernel.c \
 	uart.c \
 	printf.c \
-	sched.c
+	sched.c \
+	trap.c
 
 USER_MODE := no
 OBJDUMP_FLAGS += -M no-aliases

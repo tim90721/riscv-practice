@@ -2,6 +2,7 @@
 
 #include "sched.h"
 #include "task.h"
+#include "trap.h"
 #include "uart.h"
 
 struct task_struct test_task[2];
@@ -12,7 +13,11 @@ void test_task_func(void *param)
 
 	printf("test task %d created!\n", idx);
 
+	/* intentional generate an exception */
+	*(int *)0x00000000 = 0x1;
+
 	while (1) {
+
 		u32 i = 5000000;
 
 		printf("test task %d executing\n", idx);
@@ -36,6 +41,8 @@ int start_kernel(void)
 	printf("hello world: %d\n", i);
 	printf("hello world: %p\n", &i);
 	printf("hello world: %%\n");
+
+	trap_init();
 
 	sched_init();
 

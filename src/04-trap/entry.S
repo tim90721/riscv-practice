@@ -71,7 +71,41 @@
 .endm
 
 	.text
+	.global trap_vector
+	.align 4
+
+trap_vector:
+	# retrieve and save interrupted task's context
+	csrrw		t6, mscratch, t6
+	reg_save	t6
+
+	# save interrupted task's t6
+	mv		t5, t6
+	csrr		t6, mscratch
+	sw		t6, 120(t5)
+
+	# save interrupted context back for restore later
+	csrw		mscratch, t5
+
+	# get the cause and of trap
+	csrr		a0, mepc
+	csrr		a1, mcause
+
+	# call C environment trap handler
+	call		trap_handler
+
+	# update return address if needed
+	csrw		mepc, a0
+
+	# restore interrupted task
+	csrr		t6, mscratch
+	reg_restore	t6
+
+	mret
+
+	.text
 	.global context_switch
+	.align 4
 
 context_switch:
 	# retrieve previous context saving address to t6
