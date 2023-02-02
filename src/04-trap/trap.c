@@ -1,5 +1,7 @@
-#include "stdio.h"
+#include <stdio.h>
 #include "regs.h"
+
+#include "riscv.h"
 #include "trap.h"
 #include "types.h"
 
@@ -26,7 +28,8 @@ extern void trap_vector(void);
 
 void trap_init(void)
 {
-	__asm__ __volatile__("csrw mtvec, %0" : : "r" (trap_vector));
+	/* set trap vector */
+	w_mtvec((reg_t)trap_vector);
 }
 
 reg_t trap_handler(reg_t mepc, reg_t mcause)
