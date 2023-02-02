@@ -1,6 +1,9 @@
 #include "mmio.h"
-#include "uart.h"
 #include "types.h"
+
+#include "irq.h"
+#include "plic.h"
+#include "uart.h"
 
 static inline void uart_write(u8 addr, u8 val)
 {
@@ -32,6 +35,28 @@ int uart_puts(char *s)
 	return cnt;
 }
 
+int uart_getc(void)
+{
+	if (uart_read(LSR) & RX_RDY)
+		return uart_read(RHR);
+
+	return -1;
+}
+
+void uart_isr(void)
+{
+	int c;
+
+	while ((c = uart_getc())) {
+		if (c == -1)
+			break;
+
+		uart_putc((char)c);
+		if ((char)c == '\r')
+			uart_putc('\n');
+	}
+}
+
 int uart_init(void)
 {
 	u8 lcr;
@@ -53,6 +78,13 @@ int uart_init(void)
 	 * no break
 	 */
 	uart_write(LCR, (0x3 & DLEN_MASK) << DLEN_SHFT);
+
+	/* enable receive irq */
+	uart_write(IER, uart_read(IER) | RX_RDY_IRQ_EN);
+
+	plic_set_irq_priority(IRQ_UART0, 1);
+	plic_register_irq(IRQ_UART0, uart_isr);
+	plic_enable_irq(IRQ_UART0);
 
 	return 0;
 }
