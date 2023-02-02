@@ -4,6 +4,7 @@ ASM_SRC := \
 C_SRC := \
 	kernel.c \
 	uart.c \
+	plic.c \
 	printf.c \
 	sched.c \
 	trap.c

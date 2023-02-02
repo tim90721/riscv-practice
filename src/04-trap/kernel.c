@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "plic.h"
 #include "sched.h"
 #include "task.h"
 #include "trap.h"
@@ -34,6 +35,10 @@ int start_kernel(void)
 {
 	int i = 10;
 
+	trap_init();
+
+	plic_init();
+
 	uart_init();
 
 	printf("hello world: %s\n", "test");
@@ -41,8 +46,6 @@ int start_kernel(void)
 	printf("hello world: %d\n", i);
 	printf("hello world: %p\n", &i);
 	printf("hello world: %%\n");
-
-	trap_init();
 
 	sched_init();
 
