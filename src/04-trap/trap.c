@@ -7,19 +7,6 @@
 #include "trap.h"
 #include "types.h"
 
-/* MIE */
-#define MIE_SSIE		BIT(1)
-#define MIE_MSIE		BIT(3)
-#define MIE_STIE		BIT(5)
-#define MIE_MTIE		BIT(7)
-#define MIE_SEIE		BIT(9)
-#define MIE_MEIE		BIT(11)
-
-/* MSTATUS */
-#define MSTATUS_MIE		BIT(3)
-
-/* MCAUSE */
-#define MCAUSE_IRQ		BIT(31)
 void (*external_irq_handler)(void);
 
 enum interrupt_id {
