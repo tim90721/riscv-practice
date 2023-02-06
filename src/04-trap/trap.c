@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "regs.h"
 
+#include "irq.h"
 #include "plic.h"
 #include "riscv.h"
 #include "trap.h"
@@ -19,6 +20,7 @@
 
 /* MCAUSE */
 #define MCAUSE_IRQ		BIT(31)
+void (*external_irq_handler)(void);
 
 enum interrupt_id {
 	SUPERVISOR_SW_IRQ = 1,
@@ -66,14 +68,16 @@ reg_t trap_handler(reg_t mepc, reg_t mcause)
 		mcause &= (~MCAUSE_IRQ);
 		switch (mcause) {
 		case MACHINE_EXT_IRQ:
-			plic_irq_handler();
+			if (external_irq_handler)
+				external_irq_handler();
 
 			break;
 		default:
-			printf("irq not implement, mcause: 0x%x\n", mcause | MCAUSE_IRQ);
+			printf("irq not implement, mcause: 0x%x\n",
+				mcause | MCAUSE_IRQ);
 		}
 	} else {
-		printf("TRAP Exception: %x\n", mcause);
+		//printf("TRAP Exception: pc:%p cuase: %x\n", mepc, mcause);
 		if (mcause == STORE_ACCESS_FAULT)
 			mepc += 4;
 	}

@@ -16,7 +16,6 @@
 void plic_set_irq_priority(enum irq_id id, u32 priority);
 void plic_enable_irq(enum irq_id id);
 void plic_disable_irq(enum irq_id);
-void plic_irq_handler(void);
 void plic_init(void);
 int plic_register_irq(enum irq_id id, irq_handler_t handler);
 #endif /* _PLIC_H_ */

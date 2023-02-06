@@ -11,4 +11,6 @@ enum irq_id {
 	IRQ_PCIE = 32,
 	__IRQ_MAX_ID,
 };
+
+extern void (*external_irq_handler)(void);
 #endif /* _IRQ_H_ */

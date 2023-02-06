@@ -3,9 +3,12 @@
 #include "regs.h"
 #include "types.h"
 
+#include "irq.h"
 #include "platform.h"
 #include "plic.h"
 #include "riscv.h"
+
+extern void (*external_irq_handler)(void);
 
 static irq_handler_t irq_handlers[__IRQ_MAX_ID];
 
@@ -33,7 +36,6 @@ void plic_set_irq_priority(enum irq_id id, u32 priority)
 {
 	if (id < __IRQ_MAX_ID)
 		plic_write(PLIC_PRIORITY(id), priority);
-		//mmio_write_32(PLIC_PRIORITY(id), priority);
 }
 
 void plic_enable_irq(enum irq_id id)
@@ -42,7 +44,6 @@ void plic_enable_irq(enum irq_id id)
 
 	if (id < __IRQ_MAX_ID)
 		plic_setbits(PLIC_ENABLE(id, hart), BIT(id % PLIC_IRQ_PER_REG));
-		//mmio_setbits_32(PLIC_ENABLE(id, hart), BIT(id % PLIC_IRQ_PER_REG));
 }
 
 void plic_disable_irq(enum irq_id id)
@@ -51,7 +52,6 @@ void plic_disable_irq(enum irq_id id)
 
 	if (id < __IRQ_MAX_ID)
 		plic_clrbits(PLIC_ENABLE(id, hart), BIT(id % PLIC_IRQ_PER_REG));
-		//mmio_clrbits_32(PLIC_ENABLE(id, hart), BIT(id % PLIC_IRQ_PER_REG));
 }
 
 static void plic_complete(enum irq_id id)
@@ -60,10 +60,9 @@ static void plic_complete(enum irq_id id)
 
 	if (id < __IRQ_MAX_ID)
 		plic_write(PLIC_COMPLETE(hart), id);
-		//mmio_write_32(PLIC_COMPLETE(hart), id);
 }
 
-void plic_irq_handler(void)
+static void plic_irq_handler(void)
 {
 	reg_t hart = rhartid();
 
@@ -84,9 +83,7 @@ void plic_init(void)
 	/* let all irq priority pass */
 	plic_write(PLIC_PTHRES(hart), 0);
 
-	//mmio_write_32(PLIC_PRIORITY(IRQ_UART0), 1);
-
-	//mmio_write_32(PLIC_ENABLE(IRQ_UART0, hart), IRQ_UART0 %
+	external_irq_handler = plic_irq_handler;
 }
 
 int plic_register_irq(enum irq_id id, irq_handler_t handler)
