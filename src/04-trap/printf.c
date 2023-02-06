@@ -12,33 +12,71 @@
 static char print_buffer[PB_NUM][PB_LEN];
 static u8 pb_idx;
 
-static int decode_format(char *buf, u32 *pos, u32 size, const char *fmt, va_list args)
+static void format_signed(char *buf, u32 *pos, u32 size,
+			  char fmt, u8 longarg, va_list args)
 {
-	const char *old_fmt = fmt;
-	const char *s;
 	long num;
-	int digits;
-	int n;
+	int digits = 1;
 	int i;
-	u8 longarg = 0;
+	int n;
 
-	if (*fmt == 'l') {
-		longarg = 1;
-		fmt++;
+	if (longarg == 1)
+		num = va_arg(args, long);
+	else
+		num = va_arg(args, int);
+
+	if (num < 0) {
+		num = -num;
+		if (*pos < size)
+			buf[(*pos)] = '-';
+		(*pos)++;
 	}
 
-	switch (*fmt) {
+	for (n = num; n /= 10; digits++)
+		;
+	for (i = digits - 1; i >= 0; i--) {
+		if ((*pos) + i < size)
+			buf[(*pos) + i] = '0' + num % 10;
+		num /= 10;
+	}
+
+	(*pos) += digits;
+}
+
+static void format_unsigned(char *buf, u32 *pos, u32 size,
+			    char fmt, u8 longarg, va_list args)
+{
+	unsigned long num;
+	int digits;
+	int i;
+	int n;
+
+	if (fmt == 'p')
+		longarg = 1;
+
+	if (longarg == 1) {
+		num = va_arg(args, unsigned long);
+		digits = sizeof(unsigned long);
+	} else {
+		num = va_arg(args, unsigned int);
+		digits = sizeof(unsigned int);
+	}
+
+	switch (fmt) {
 	case 'p':
 		longarg = 1;
+
 		if (*pos < size)
 			buf[(*pos)] = '0';
 		(*pos)++;
+
 		if (*pos < size)
 			buf[(*pos)] = 'x';
 		(*pos)++;
+
+		/* fallthrough */
 	case 'x':
-		num = longarg ? va_arg(args, long) : va_arg(args, int);
-		digits = 2 * (longarg ? sizeof(long) : sizeof(int)) - 1;
+		digits = digits * 2 - 1;
 
 		for (i = digits; i >= 0; i--) {
 			n = (num >> (4 * i)) & 0xF;
@@ -47,17 +85,10 @@ static int decode_format(char *buf, u32 *pos, u32 size, const char *fmt, va_list
 
 			(*pos)++;
 		}
-		break;
-	case 'd':
-		num = longarg ? va_arg(args, long) : va_arg(args, int);
-		digits = 1;
 
-		if (num < 0) {
-			num = -num;
-			if (*pos < size)
-				buf[(*pos)] = '-';
-			(*pos)++;
-		}
+		break;
+	case 'u':
+		digits = 1;
 
 		for (n = num; n /= 10; digits++)
 			;
@@ -68,7 +99,29 @@ static int decode_format(char *buf, u32 *pos, u32 size, const char *fmt, va_list
 		}
 
 		(*pos) += digits;
-		longarg = 0;
+		break;
+	}
+}
+
+static int decode_format(char *buf, u32 *pos, u32 size, const char *fmt, va_list args)
+{
+	const char *old_fmt = fmt;
+	const char *s;
+	u8 longarg = 0;
+
+	if (*fmt == 'l') {
+		longarg = 1;
+		fmt++;
+	}
+
+	if (*fmt == 'l') {
+		longarg = 2;
+		fmt++;
+	}
+
+	switch (*fmt) {
+	case 'd':
+		format_signed(buf, pos, size, *fmt, longarg, args);
 		break;
 	case 's':
 		s = va_arg(args, const char *);
@@ -92,6 +145,8 @@ static int decode_format(char *buf, u32 *pos, u32 size, const char *fmt, va_list
 			buf[(*pos)] = '%';
 		(*pos)++;
 		break;
+	default:
+		format_unsigned(buf, pos, size, *fmt, longarg, args);
 	}
 
 	fmt++;
