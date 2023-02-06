@@ -6,13 +6,24 @@
 #include "trap.h"
 #include "uart.h"
 
-struct task_struct test_task[2];
+struct task_struct test_task;
+struct task_struct init_task;
+
+void init_task_func(void *param)
+{
+	trap_init();
+
+	plic_init();
+
+	uart_init();
+
+	while (1)
+		schedule();
+}
 
 void test_task_func(void *param)
 {
-	u32 idx = (u32)param;
-
-	printf("test task %d created!\n", idx);
+	printf("test task created!\n");
 
 	/* intentional generate an exception */
 	*(int *)0x00000000 = 0x1;
@@ -21,26 +32,21 @@ void test_task_func(void *param)
 
 		u32 i = 5000000;
 
-		printf("test task %d executing\n", idx);
+		printf("test task executing\n");
 		while (i--)
 			;
 
 		schedule();
 	}
 
-	printf("test task %d unexpected\n", idx);
+	printf("test task unexpected\n");
 }
 
 int start_kernel(void)
 {
 	int i = 10;
 
-	trap_init();
-
-	plic_init();
-
-	uart_init();
-
+	/* simple printf test... */
 	printf("hello world: %s\n", "test");
 	printf("hello world: %c\n", 'o');
 	printf("hello world: %d\n", i);
@@ -49,8 +55,8 @@ int start_kernel(void)
 
 	sched_init();
 
-	task_create(&test_task[0], test_task_func, (void *)1);
-	task_create(&test_task[1], test_task_func, (void *)2);
+	task_create(&init_task, init_task_func, NULL);
+	task_create(&test_task, test_task_func, NULL);
 
 	schedule();
 
