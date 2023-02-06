@@ -8,6 +8,7 @@
 #include "types.h"
 
 void (*external_irq_handler)(void);
+void (*timer_irq_handler)(void);
 
 enum interrupt_id {
 	SUPERVISOR_SW_IRQ = 1,
@@ -54,6 +55,11 @@ reg_t trap_handler(reg_t mepc, reg_t mcause)
 	if (mcause & MCAUSE_IRQ) {
 		mcause &= (~MCAUSE_IRQ);
 		switch (mcause) {
+		case MACHINE_TIMER_IRQ:
+			if (timer_irq_handler)
+				timer_irq_handler();
+
+			break;
 		case MACHINE_EXT_IRQ:
 			if (external_irq_handler)
 				external_irq_handler();

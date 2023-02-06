@@ -3,6 +3,7 @@
 #include "plic.h"
 #include "sched.h"
 #include "task.h"
+#include "timer.h"
 #include "trap.h"
 #include "uart.h"
 
@@ -14,6 +15,8 @@ void init_task_func(void *param)
 	trap_init();
 
 	plic_init();
+
+	timer_init();
 
 	uart_init();
 

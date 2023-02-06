@@ -13,4 +13,5 @@ enum irq_id {
 };
 
 extern void (*external_irq_handler)(void);
+extern void (*timer_irq_handler)(void);
 #endif /* _IRQ_H_ */

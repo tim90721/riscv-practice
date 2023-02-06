@@ -7,6 +7,7 @@ C_SRC := \
 	plic.c \
 	printf.c \
 	sched.c \
+	timer.c \
 	trap.c
 
 USER_MODE := no
