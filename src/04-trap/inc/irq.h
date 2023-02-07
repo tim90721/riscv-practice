@@ -1,6 +1,8 @@
 #ifndef _IRQ_H_
 #define _IRQ_H_
 
+#include "riscv.h"
+
 typedef void (*irq_handler_t)(void);
 
 enum irq_id {
@@ -14,4 +16,14 @@ enum irq_id {
 
 extern void (*external_irq_handler)(void);
 extern void (*timer_irq_handler)(void);
+
+static inline void disable_irq(void)
+{
+	w_mstatus(r_mstatus() & (~MSTATUS_MIE));
+}
+
+static inline void enable_irq(void)
+{
+	w_mstatus(r_mstatus() | MSTATUS_MIE);
+}
 #endif /* _IRQ_H_ */
