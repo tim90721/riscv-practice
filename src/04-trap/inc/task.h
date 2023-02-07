@@ -41,9 +41,11 @@ struct context {
 };
 
 struct task_struct {
-	u8 stack[STACK_SIZE];
 	struct context c;
 	struct list node;
+	u32 wakeup_tick;
+	/* should add memory management function to dynamically allocate */
+	u8 stack[STACK_SIZE];
 };
 
 void task_create(struct task_struct *task, void (*func)(void *param), void *param);

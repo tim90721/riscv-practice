@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "riscv.h"
+
 #include "plic.h"
 #include "sched.h"
 #include "task.h"
@@ -20,8 +22,11 @@ void init_task_func(void *param)
 
 	uart_init();
 
-	while (1)
-		schedule();
+	while (1) {
+		mdelay(2000);
+
+		printf("init task run\n");
+	}
 }
 
 void test_task_func(void *param)
@@ -32,14 +37,9 @@ void test_task_func(void *param)
 	*(int *)0x00000000 = 0x1;
 
 	while (1) {
-
-		u32 i = 5000000;
-
 		printf("test task executing\n");
-		while (i--)
-			;
 
-		schedule();
+		mdelay(5000);
 	}
 
 	printf("test task unexpected\n");
@@ -63,10 +63,15 @@ int start_kernel(void)
 
 	schedule();
 
-	printf("unexpected\n");
+	while (1) {
+		wfi();
 
-	while (1)
-		;
+		if (sched_has_task_woken()) {
+			printf("idle task run\n");
+
+			schedule();
+		}
+	}
 
 	/* should never reach here */
 	return 0;
