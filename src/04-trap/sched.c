@@ -52,6 +52,19 @@ void schedule(void)
 	}
 }
 
+void sched_wakeup_task(u32 tick)
+{
+	struct task_struct *task, *tmp;
+
+	list_for_each_entry_safe(task, tmp, &idle_head, node) {
+		if (tick >= task->wakeup_tick) {
+			list_del(&task->node);
+			list_add_tail(&task->node, &task_head);
+			task_has_woken = 1;
+		}
+	}
+}
+
 u8 sched_has_task_woken(void)
 {
 	return task_has_woken;

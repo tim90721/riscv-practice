@@ -8,6 +8,7 @@
 #include "clint.h"
 #include "irq.h"
 #include "platform.h"
+#include "sched.h"
 #include "timer.h"
 
 extern void (*timer_irq_handler)(void);
@@ -35,6 +36,8 @@ static inline void timer_reload(u64 val)
 static void clint_timer_irq_handler(void)
 {
 	tick++;
+
+	sched_wakeup_task(tick);
 
 	timer_reload(TIMER_INTERVAL);
 }
