@@ -30,7 +30,7 @@ static inline void list_node_init(struct list *l)
 	list_entry((pos)->member.next, typeof(*pos), member)
 
 #define list_empty(l)							\
-	((l)->next == (l)->prev)
+	((l)->next == (l))
 
 #define list_is_head(pos, head, member)					\
 	(&(pos)->member == (head))
@@ -39,6 +39,13 @@ static inline void list_node_init(struct list *l)
 	for ((pos) = list_first_entry(head, typeof(*pos), member);	\
 	     !list_is_head(pos, head, member);				\
 	     (pos) = list_next_entry(pos, member))
+
+#define list_for_each_entry_safe(pos, tmp, head, member)		\
+	for ((pos) = list_first_entry(head, typeof(*pos), member),	\
+	     tmp = list_next_entry(pos, member);				\
+	     !list_is_head(pos, head, member);				\
+	     pos = tmp, tmp = list_next_entry(tmp, member))
+
 
 static inline void list_add(struct list *node, struct list *head)
 {
