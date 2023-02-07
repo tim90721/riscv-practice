@@ -59,4 +59,9 @@ static inline reg_t r_mstatus(void)
 
 	return mstatus;
 }
+
+static inline void wfi(void)
+{
+	__asm__ __volatile__("wfi");
+}
 #endif /* _RISCV_H_ */
